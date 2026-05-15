@@ -1,42 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>My AI Chatbot</title>
-</head>
-<body>
-
-<h1>My First AI Chatbot</h1>
-
-<input type="text" id="userText" placeholder="Type message...">
-
-<button onclick="reply()">Send</button>
-
-<p id="botReply"></p>
-
 <script>
+async function reply() {
 
-function reply() {
+let message = document.getElementById("userText").value;
 
-let message =
-document.getElementById("userText").value;
+document.getElementById("botReply").innerText = "Typing... 🤖";
 
-if(message == "hello") {
-
-document.getElementById("botReply").innerText =
-"Hi! How are you?";
-
-}
-
-else {
+// fake AI (temporary smart response)
+setTimeout(() => {
 
 document.getElementById("botReply").innerText =
-"I am your AI chatbot";
+"You said: " + message;
+
+}, 1000);
 
 }
-
-}
-
 </script>
-
-</body>
-</html>
