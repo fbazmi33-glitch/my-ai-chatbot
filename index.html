@@ -1,7 +1,7 @@
 <script>
 async function reply() {
 
-let msg = document.getElementById("userText").value;
+let msg = document.getElementById("userText").value;if(msg.trim() === "") return;
 let chatbox = document.getElementById("chatbox");
 
 // user message show
@@ -21,7 +21,8 @@ let data = await res.json();
 let reply = data.generated_text || "No response";
 
 // remove typing
-document.getElementById("typing").remove();
+let typing = document.getElementById("typing");
+if (typing) typing.remove();
 
 // bot reply
 chatbox.innerHTML += "<p><b>Bot:</b> " + reply + "</p>";
