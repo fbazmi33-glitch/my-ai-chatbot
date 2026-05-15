@@ -1,14 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My AI Chatbot</title>
+</head>
+
+<body>
+
+<h1>My AI Chatbot 🤖</h1>
+
+<div id="chatbox" style="border:1px solid #ccc; padding:10px; height:300px; overflow:auto;"></div>
+
+<input type="text" id="userText" placeholder="Type message..." />
+<button onclick="reply()">Send</button>
+
 <script>
+
 async function reply() {
 
-let msg = document.getElementById("userText").value;if(msg.trim() === "") return;
+let msg = document.getElementById("userText").value;
+if(msg.trim() === "") return;
+
 let chatbox = document.getElementById("chatbox");
 
-// user message show
 chatbox.innerHTML += "<p><b>You:</b> " + msg + "</p>";
 
-// typing effect
 chatbox.innerHTML += "<p id='typing'><i>Bot is typing...</i></p>";
+
+try {
 
 let res = await fetch("https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill", {
 method: "POST",
@@ -18,22 +36,30 @@ body: JSON.stringify({ inputs: msg })
 
 let data = await res.json();
 
+let typing = document.getElementById("typing");
+if(typing) typing.remove();
+
 let reply = data.generated_text || "No response";
 
-// remove typing
-let typing = document.getElementById("typing");
-if (typing) typing.remove();
-
-// bot reply
 chatbox.innerHTML += "<p><b>Bot:</b> " + reply + "</p>";
 
-// clear input
+} catch (e) {
+
+document.getElementById("typing").remove();
+
+chatbox.innerHTML += "<p><b>Bot:</b> Error aa gaya 😢</p>";
+
+}
+
 document.getElementById("userText").value = "";
 
-// scroll fix (safe)
 setTimeout(() => {
   chatbox.scrollTop = chatbox.scrollHeight;
 }, 100);
 
 }
+
 </script>
+
+</body>
+</html>
