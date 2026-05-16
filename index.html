@@ -1,107 +1,180 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>My AI Chatbot</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My AI Chatbot</title>
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #f2f2f2;
-      padding: 20px;
-    }
+<style>
 
-    h1 {
-      text-align: center;
-    }
+body{
+margin:0;
+font-family:Arial;
+background:#0f172a;
+display:flex;
+flex-direction:column;
+height:100vh;
+color:white;
+}
 
-    #chatbox {
-      background: white;
-      height: 400px;
-      overflow-y: auto;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-    }
+header{
+background:#1e293b;
+padding:15px;
+text-align:center;
+font-size:24px;
+font-weight:bold;
+}
 
-    .user {
-      color: blue;
-      margin: 10px 0;
-    }
+#chatbox{
+flex:1;
+overflow-y:auto;
+padding:10px;
+}
 
-    .bot {
-      color: green;
-      margin: 10px 0;
-    }
+.user{
+background:#2563eb;
+padding:12px;
+border-radius:12px;
+margin:10px;
+margin-left:auto;
+max-width:80%;
+width:fit-content;
+}
 
-    input {
-      width: 75%;
-      padding: 10px;
-    }
+.bot{
+background:#334155;
+padding:12px;
+border-radius:12px;
+margin:10px;
+max-width:80%;
+width:fit-content;
+}
 
-    button {
-      padding: 10px;
-    }
-  </style>
+.bottom{
+display:flex;
+padding:10px;
+background:#1e293b;
+}
+
+input{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+font-size:16px;
+outline:none;
+}
+
+button{
+padding:12px 20px;
+margin-left:10px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+</style>
 </head>
 
 <body>
 
-  <h1>My AI Chatbot 🤖</h1>
+<header>My AI Chatbot 🤖</header>
 
-  <div id="chatbox"></div>
+<div id="chatbox"></div>
 
-  <input type="text" id="userText" placeholder="Type message..." />
-  <button onclick="reply()">Send</button>
+<div class="bottom">
+<input type="text" id="userText" placeholder="Ask anything...">
+<button onclick="reply()">Send</button>
+</div>
 
-  <script>
+<script>
 
-    function reply() {
+// YAHAN APNI OPENROUTER API KEY PASTE KARO
+const API_KEY = "PASTE_YOUR_API_KEY_HERE";
 
-      let msg = document.getElementById("userText").value;
+async function reply(){
 
-      if (msg.trim() === "") return;
+let input = document.getElementById("userText");
+let msg = input.value;
 
-      let chatbox = document.getElementById("chatbox");
+if(msg.trim() === "") return;
 
-      chatbox.innerHTML += `<p class="user"><b>You:</b> ${msg}</p>`;
+let chatbox = document.getElementById("chatbox");
 
-      let botReply = "";
+// USER MESSAGE
+chatbox.innerHTML += `
+<div class="user">
+${msg}
+</div>
+`;
 
-      msg = msg.toLowerCase();
+input.value = "";
 
-      if (msg.includes("hello") || msg.includes("hlo") || msg.includes("hi")) {
-        botReply = "Hello 👋 How are you?";
-      }
+// TYPING MESSAGE
+chatbox.innerHTML += `
+<div class="bot" id="typing">
+Typing...
+</div>
+`;
 
-      else if (msg.includes("how are you")) {
-        botReply = "I am fine 😊";
-      }else if (msg.includes("kese ho") || msg.includes("kaise ho")) {
-  botReply = "Main theek ho 😊 Tum kese ho?";
-      }
+chatbox.scrollTop = chatbox.scrollHeight;
 
-      else if (msg.includes("name")) {
-        botReply = "I am your AI chatbot 🤖";
-      }
+try{
 
-      else if (msg.includes("bye")) {
-        botReply = "Allah Hafiz 👋";
-      }
+const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
 
-      else {
-        botReply = "Mujhe abhi itna samajh nahi aya 😅";
-      }
+method:"POST",
 
-      chatbox.innerHTML += `<p class="bot"><b>Bot:</b> ${botReply}</p>`;
+headers:{
+"Authorization":"Bearer " + API_KEY,
+"Content-Type":"application/json"
+},
 
-      document.getElementById("userText").value = "";
+body: JSON.stringify({
 
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
+model:"openai/gpt-3.5-turbo",
 
-  </script>
+messages:[
+{
+role:"user",
+content:msg
+}
+]
+
+})
+
+});
+
+const data = await response.json();
+
+document.getElementById("typing").remove();
+
+chatbox.innerHTML += `
+<div class="bot">
+${data.choices[0].message.content}
+</div>
+`;
+
+chatbox.scrollTop = chatbox.scrollHeight;
+
+}
+
+catch(error){
+
+document.getElementById("typing").innerHTML = "Error 😢";
+
+}
+
+}
+
+</script>
 
 </body>
-
 </html>
