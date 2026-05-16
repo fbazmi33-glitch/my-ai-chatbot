@@ -13,15 +13,14 @@
 
     h1 {
       text-align: center;
-      color: #333;
     }
 
     #chatbox {
       background: white;
-      border-radius: 10px;
-      padding: 10px;
       height: 400px;
       overflow-y: auto;
+      padding: 10px;
+      border-radius: 10px;
       border: 1px solid #ccc;
       margin-bottom: 10px;
     }
@@ -39,21 +38,10 @@
     input {
       width: 75%;
       padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
     }
 
     button {
-      padding: 10px 20px;
-      border: none;
-      background: black;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #333;
+      padding: 10px;
     }
   </style>
 </head>
@@ -69,7 +57,7 @@
 
   <script>
 
-    async function reply() {
+    function reply() {
 
       let msg = document.getElementById("userText").value;
 
@@ -79,43 +67,35 @@
 
       chatbox.innerHTML += `<p class="user"><b>You:</b> ${msg}</p>`;
 
-      chatbox.innerHTML += `<p id="typing"><i>Bot is typing...</i></p>`;
+      let botReply = "";
 
-      chatbox.scrollTop = chatbox.scrollHeight;
+      msg = msg.toLowerCase();
 
-      try {
-
-        let res = await fetch("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer hf_demo"
-          },
-          body: JSON.stringify({
-            inputs: msg
-          })
-        });
-
-        let data = await res.json();
-
-        document.getElementById("typing").remove();
-
-        let botReply = data.generated_text || "I am thinking...";
-
-        chatbox.innerHTML += `<p class="bot"><b>Bot:</b> ${botReply}</p>`;
-
-      } catch (error) {
-
-        document.getElementById("typing").remove();
-
-        chatbox.innerHTML += `<p class="bot"><b>Bot:</b> Error aa gaya 😢</p>`;
-
+      if (msg.includes("hello") || msg.includes("hlo") || msg.includes("hi")) {
+        botReply = "Hello 👋 How are you?";
       }
+
+      else if (msg.includes("how are you")) {
+        botReply = "I am fine 😊";
+      }
+
+      else if (msg.includes("name")) {
+        botReply = "I am your AI chatbot 🤖";
+      }
+
+      else if (msg.includes("bye")) {
+        botReply = "Allah Hafiz 👋";
+      }
+
+      else {
+        botReply = "Mujhe abhi itna samajh nahi aya 😅";
+      }
+
+      chatbox.innerHTML += `<p class="bot"><b>Bot:</b> ${botReply}</p>`;
 
       document.getElementById("userText").value = "";
 
       chatbox.scrollTop = chatbox.scrollHeight;
-
     }
 
   </script>
